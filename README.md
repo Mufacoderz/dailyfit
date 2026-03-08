@@ -1,6 +1,6 @@
 # 🔥 DailyFit 
 
-Aplikasi pendukung workout + fitness tracker.
+Web aplikasi pendukung workout + fitness tracker.
 
 ## Stack
 - **Frontend**: React + Vite, React Router, Recharts, Lucide Icons
@@ -84,4 +84,3 @@ dailyfit/
 - ✅ **Workout Plans** — Buat plan custom, assign exercise, jadwal bebas
 - ✅ **Daily Checklist** — Centang latihan harian, filter per tanggal, load dari plan
 - ✅ **Statistics** — Streak, completion rate, bar chart, line chart, pie chart kategori
-- ✅ **Tema Strong Energy** — Merah-orange, Bebas Neue font, background terang
