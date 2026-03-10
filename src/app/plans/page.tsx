@@ -149,7 +149,7 @@ export default function PlansPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {plans.map((plan, i) => (
                 <motion.div key={plan.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
-                  whileHover={{ y: -3 }} className="bg-stone-900 border border-stone-700/50 rounded-2xl overflow-hidden">
+                  whileHover={{ y: -3 }} className="bg-stone-900 border border-stone-700/50 rounded-2xl overflow-hidden flex flex-col">
                   <div className="bg-fire-grad p-4">
                     <div className="font-display text-xl tracking-wider text-white">{plan.name}</div>
                     {plan.description && <div className="text-xs text-white/70 mt-1">{plan.description}</div>}
@@ -164,7 +164,7 @@ export default function PlansPage() {
                       )}
                     </div>
                   </div>
-                  <div className="p-4">
+                  <div className="p-4 flex flex-col flex-1">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-stone-500 mb-3">
                       <Dumbbell size={12} />{plan.exercises?.length || 0} exercises
                     </div>
@@ -178,7 +178,7 @@ export default function PlansPage() {
                         <span className="text-[10px] font-bold text-stone-600 px-1">+{plan.exercises.length - 4}</span>
                       )}
                     </div>
-                    <div className="flex gap-2 border-t border-stone-700/40 pt-3">
+                    <div className="flex gap-2 border-t border-stone-700/40 pt-3 mt-auto">
                       <button onClick={() => startWorkout(plan)}
                         className="flex-1 flex items-center justify-center gap-1.5 bg-fire-grad text-white text-xs font-black py-2 rounded-xl shadow-fire hover:shadow-fire-lg transition-all">
                         <PlayCircle size={13} /> Start Today
