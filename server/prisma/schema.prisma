@@ -1,12 +1,71 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Exercise {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  muscleGroup String   // chest, back, shoulders, triceps, biceps, core, legs, glutes, full_body
+  category    String   // strength, cardio, balance, flexibility
+  type        String   // reps, time
+  sets        Int?
+  reps        Int?
+  duration    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  planExercises PlanExercise[]
+  dailyLogs     DailyLog[]
+}
+
+model Plan {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  planDays PlanDay[]
+}
+
+model PlanDay {
+  id        Int    @id @default(autoincrement())
+  planId    Int
+  day       String // monday, tuesday, dst
+  label     String // Push, Pull, Legs, Rest
+
+  plan          Plan           @relation(fields: [planId], references: [id])
+  planExercises PlanExercise[]
+}
+
+model PlanExercise {
+  id         Int     @id @default(autoincrement())
+  planDayId  Int
+  exerciseId Int
+  sets       Int?
+  reps       Int?
+  duration   String?
+  order      Int     @default(0)
+
+  planDay  PlanDay  @relation(fields: [planDayId], references: [id])
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
+}
+
+model DailyLog {
+  id         Int      @id @default(autoincrement())
+  date       DateTime @default(now())
+  exerciseId Int
+  sets       Int?
+  reps       Int?
+  duration   String?
+  done       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
 }
