@@ -4,15 +4,16 @@ import prisma from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
-  if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
+  const userId = session.user.id;
   const date = req.nextUrl.searchParams.get("date");
   if (!date) return NextResponse.json({ message: "Date diperlukan" }, { status: 400 });
 
   const log = await prisma.dailyLog.findUnique({
     where: {
       userId_date: {
-        userId: session.user.id,
+        userId,
         date: new Date(date),
       },
     },
@@ -29,8 +30,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
+  const userId = session.user.id;
   const { date, exerciseIds, source } = await req.json();
   if (!date || !exerciseIds?.length) {
     return NextResponse.json({ message: "Data tidak lengkap" }, { status: 400 });
@@ -39,13 +41,13 @@ export async function POST(req: NextRequest) {
   const dateObj = new Date(date);
 
   let log = await prisma.dailyLog.findUnique({
-    where: { userId_date: { userId: session.user.id, date: dateObj } },
+    where: { userId_date: { userId, date: dateObj } },
     include: { items: true },
   });
 
   if (!log) {
     log = await prisma.dailyLog.create({
-      data: { userId: session.user.id, date: dateObj },
+      data: { userId, date: dateObj },
       include: { items: true },
     });
   }

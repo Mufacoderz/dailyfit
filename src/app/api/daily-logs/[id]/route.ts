@@ -4,15 +4,16 @@ import prisma from "@/lib/prisma";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
+  const userId = session.user.id;
   const { id } = await params;
   const { isChecked } = await req.json();
 
   const item = await prisma.dailyLogItem.findFirst({
     where: {
       id,
-      dailyLog: { userId: session.user.id },
+      dailyLog: { userId },
     },
   });
 

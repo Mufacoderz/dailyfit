@@ -4,10 +4,12 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
   const session = await auth();
-  if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+  const userId = session.user.id;
 
   const exercises = await prisma.exercise.findMany({
-    where: { userId: session.user.id },
+    where: { userId },
     orderBy: { createdAt: "desc" },
   });
 
@@ -16,8 +18,9 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
+  const userId = session.user.id;
   const { name, category, type, muscleGroup, reps, sets, durationSeconds, timeSets } = await req.json();
 
   if (!name || !category || !type || !muscleGroup) {
@@ -26,7 +29,7 @@ export async function POST(req: NextRequest) {
 
   const exercise = await prisma.exercise.create({
     data: {
-      userId: session.user.id,
+      userId,
       name,
       category,
       type,
