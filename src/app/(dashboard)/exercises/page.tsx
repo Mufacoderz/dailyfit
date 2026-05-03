@@ -1,0 +1,134 @@
+"use client";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus, Dumbbell } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { ExerciseModal } from "@/components/exercise-modal";
+import { ExerciseCard } from "@/components/ExerciseCard";
+import { type Exercise } from "@/types";
+
+export default function ExercisesPage() {
+  const qc = useQueryClient();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<Exercise | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const { data, isLoading } = useQuery<Exercise[]>({
+    queryKey: ["exercises"],
+    queryFn: () => fetch("/api/exercises").then((r) => r.json()),
+  });
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    const res = await fetch(`/api/exercises/${deleteId}`, { method: "DELETE" });
+    setDeleteId(null);
+    if (!res.ok) return toast.error("Gagal menghapus");
+    toast.success("Latihan dihapus");
+    qc.invalidateQueries({ queryKey: ["exercises"] });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="text-[0.72rem] font-semibold tracking-[2.5px] uppercase mb-1" style={{ color: "#C41230" }}>
+            Koleksi Pribadi
+          </p>
+          <h1 className="font-display text-4xl md:text-5xl" style={{ color: "#0F0A0B" }}>
+            Pustaka Latihan
+          </h1>
+        </div>
+        <button
+          onClick={() => { setEditing(null); setModalOpen(true); }}
+          className="flex items-center gap-2 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition shadow-sm flex-shrink-0"
+          style={{ background: "#C41230" }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "#9B0E25")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "#C41230")}
+        >
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline">Tambah</span>
+        </button>
+      </div>
+
+      {data?.length ? (
+        <p className="text-sm" style={{ color: "#888" }}>{data.length} latihan tersimpan</p>
+      ) : null}
+
+      {isLoading ? (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl h-[120px] animate-pulse" style={{ border: "1.5px solid rgba(0,0,0,0.07)" }} />
+          ))}
+        </div>
+      ) : !data?.length ? (
+        <div className="rounded-2xl p-14 text-center space-y-4" style={{ border: "2px dashed rgba(0,0,0,0.1)" }}>
+          <div className="h-16 w-16 rounded-2xl mx-auto flex items-center justify-center" style={{ background: "rgba(196,18,48,0.07)" }}>
+            <Dumbbell className="h-8 w-8" style={{ color: "#C41230", opacity: 0.5 }} />
+          </div>
+          <div>
+            <h3 className="font-display text-xl" style={{ color: "#0F0A0B" }}>Belum ada latihan</h3>
+            <p className="text-sm mt-1" style={{ color: "#888" }}>Mulai dengan menambahkan latihan pertama Anda.</p>
+          </div>
+          <button
+            onClick={() => { setEditing(null); setModalOpen(true); }}
+            className="inline-flex items-center gap-2 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition"
+            style={{ background: "#C41230" }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#9B0E25")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#C41230")}
+          >
+            <Plus className="h-4 w-4" /> Tambah Latihan
+          </button>
+        </div>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {data.map((ex) => (
+            <ExerciseCard
+              key={ex.id}
+              exercise={ex}
+              onEdit={(ex) => { setEditing(ex); setModalOpen(true); }}
+              onDelete={setDeleteId}
+            />
+          ))}
+        </div>
+      )}
+
+      <ExerciseModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        initial={editing}
+        onSaved={() => qc.invalidateQueries({ queryKey: ["exercises"] })}
+      />
+
+      {deleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteId(null)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+            <h3 className="font-display text-2xl" style={{ color: "#0F0A0B" }}>Hapus latihan?</h3>
+            <p className="text-sm" style={{ color: "#888" }}>Tindakan ini permanen dan tidak bisa dibatalkan.</p>
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={() => setDeleteId(null)}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium transition"
+                style={{ border: "1.5px solid rgba(0,0,0,0.1)", color: "#555" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#F6F4F1")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium text-white transition"
+                style={{ background: "#C41230" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#9B0E25")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#C41230")}
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

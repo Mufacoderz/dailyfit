@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DailyFit 🔥
 
-## Getting Started
+Tracker workout harian pribadi — Next.js 15, Prisma v6, NextAuth v5, Supabase PostgreSQL.
 
-First, run the development server:
+## Tech Stack
+
+- **Frontend + API**: Next.js 15 App Router
+- **Auth**: NextAuth v5 (Credentials)
+- **ORM**: Prisma v6
+- **Database**: Supabase PostgreSQL
+- **Styling**: Tailwind CSS
+- **Charts**: Recharts
+- **Notifications**: Sonner
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Environment variables
+
+Copy `.env.example` ke `.env.local` dan isi:
+
+```env
+DATABASE_URL="postgresql://postgres.xxxx:PASSWORD@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres"
+NEXTAUTH_SECRET="generate-dengan-openssl-rand-base64-32"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+Generate `NEXTAUTH_SECRET`:
+```bash
+openssl rand -base64 32
+```
+
+### 3. Database
+
+```bash
+npm run db:generate   # Generate Prisma client
+npm run db:migrate    # Run migrations
+```
+
+### 4. Jalankan
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Fitur
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- ✅ Auth (Register + Login)
+- ✅ Exercise Library (CRUD, reps/time-based, muscle group)
+- ✅ Plans (buat rencana dari exercise library)
+- ✅ Daily Checklist (load plan / manual, gabung tanpa hapus)
+- ✅ Statistics (streak, weekly chart, top 3, kategori)
+- ✅ Profile (edit nama)
+- ✅ Sidebar desktop + Bottom nav mobile (5 item)
+- ✅ Profile di top bar mobile
 
-## Learn More
+## Deploy ke Vercel
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push ke GitHub
+2. Connect repo di vercel.com
+3. Tambahkan environment variables di Vercel dashboard
+4. Deploy!
