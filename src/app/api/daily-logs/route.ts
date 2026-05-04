@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     include: {
       items: {
         include: { exercise: true },
-        orderBy: { order: "asc" },
+        orderBy: { order: "desc" },
       },
     },
   });
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     include: {
       items: {
         include: { exercise: true },
-        orderBy: { order: "asc" },
+        orderBy: { order: "desc" },
       },
     },
   });

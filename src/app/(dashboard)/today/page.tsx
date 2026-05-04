@@ -25,14 +25,41 @@ export default function TodayPage() {
   const progress = total > 0 ? (completed / total) * 100 : 0;
 
   const toggle = async (id: string, current: boolean) => {
-    const res = await fetch(`/api/daily-logs/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isChecked: !current }),
+  // Optimistic update — langsung ubah cache tanpa nunggu server
+  qc.setQueryData<DailyLog>(["daily", date], (old) => {
+    if (!old) return old;
+    return {
+      ...old,
+      items: old.items.map((i) =>
+        i.id === id ? { ...i, isChecked: !current } : i
+      ),
+    };
+  });
+
+  const res = await fetch(`/api/daily-logs/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isChecked: !current }),
+  });
+
+  if (!res.ok) {
+    // Kalau gagal, rollback balik ke state semula
+    qc.setQueryData<DailyLog>(["daily", date], (old) => {
+      if (!old) return old;
+      return {
+        ...old,
+        items: old.items.map((i) =>
+          i.id === id ? { ...i, isChecked: current } : i
+        ),
+      };
     });
-    if (!res.ok) return toast.error("Gagal memperbarui");
-    qc.invalidateQueries({ queryKey: ["daily"] });
-  };
+    toast.error("Gagal memperbarui");
+    return;
+  }
+
+  // Invalidate tetap dipanggil buat sync data terbaru dari server
+  qc.invalidateQueries({ queryKey: ["daily"] });
+};
 
   const addExercises = async (exerciseIds: string[], source: "plan" | "manual") => {
     const res = await fetch("/api/daily-logs", {
