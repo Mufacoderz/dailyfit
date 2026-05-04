@@ -3,6 +3,8 @@
 
 import { Flame, ChevronDown, User, LogOut } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import logo from "@/assets/logo-trans.png";
 
 interface MobileTopbarProps {
   initials: string;
@@ -15,13 +17,10 @@ export function MobileTopbar({ initials, handleSignOut }: MobileTopbarProps) {
       style={{ background: "rgba(246,244,241,0.92)", borderBottom: "1.5px solid rgba(0,0,0,0.07)" }}>
       
       <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg text-white" style={{ background: "#C41230" }}>
-          <Flame className="h-4 w-4" />
-        </div>
+        <Image src={logo} alt="DailyFit Logo" className="h-12 w-auto" />
         <span className="font-display text-lg text-[#0F0A0B]">DailyFit</span>
       </div>
 
-      {/* User Menu */}
       <div className="relative group">
         <button className="flex items-center gap-1.5 rounded-xl px-2 py-1.5" style={{ background: "rgba(0,0,0,0.04)" }}>
           <div className="h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: "#C41230" }}>

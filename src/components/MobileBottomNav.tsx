@@ -3,7 +3,7 @@
 import { Home, Dumbbell, CalendarCheck2, ListChecks, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const NAV = [
   { to: "/", label: "Home", icon: Home },
@@ -19,15 +19,30 @@ export function MobileBottomNav() {
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname.startsWith(to);
 
+  const activeIndex = NAV.findIndex((item) => isActive(item.to));
+
   return (
-    <div className="md:hidden fixed bottom-5 inset-x-4 z-30">
-      <nav className="rounded-3xl relative overflow-hidden" style={{
-        background: "rgba(15,10,11,0.94)",
-        backdropFilter: "blur(24px)",
-        boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
-        border: "1px solid rgba(255,255,255,0.08)",
-      }}>
-        <div className="grid grid-cols-5 px-1 py-1.5 relative">
+    <div className="md:hidden fixed bottom-6 inset-x-5 z-30">
+      <nav
+        style={{
+          background: "#0f0a0b",
+          borderRadius: "18px",
+          border: "1px solid #1f1415",
+        }}
+      >
+        <div className="grid grid-cols-5 relative px-1 py-1">
+          <motion.div
+            className="absolute top-1 bottom-1 rounded-2xl"
+            style={{
+              background: "#1a0a0a",
+              border: "1px solid #3d1010",
+              width: "calc(20% - 4px)",
+              marginLeft: "2px",
+            }}
+            animate={{ left: `calc(${activeIndex * 20}%)` }}
+            transition={{ type: "spring", stiffness: 350, damping: 35 }}
+          />
+
           {NAV.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.to);
@@ -36,31 +51,39 @@ export function MobileBottomNav() {
               <Link
                 key={item.to}
                 href={item.to}
-                className="flex flex-col items-center justify-center gap-1 py-3 relative z-10 active:scale-95 transition-transform"
+                className="flex flex-col items-center justify-center gap-1.5 py-3 relative z-10 active:opacity-60 transition-opacity duration-75"
               >
-                <Icon className="h-5 w-5" style={{ color: active ? "#fff" : "rgba(255,255,255,0.45)" }} />
-                <span className="text-[9px] font-semibold tracking-wide" style={{ color: active ? "#fff" : "rgba(255,255,255,0.45)" }}>
+                <Icon
+                  className="h-[20px] w-[20px]"
+                  style={{
+                    color: active ? "#dc2626" : "rgba(255,255,255,0.85)",
+                    strokeWidth: 1.8,
+                    transition: "color 0.15s",
+                  }}
+                />
+                <span
+                  className="text-[9px] font-bold tracking-wider uppercase"
+                  style={{
+                    color: active ? "#dc2626" : "rgba(255,255,255,0.85)",
+                    transition: "color 0.15s",
+                  }}
+                >
                   {item.label}
                 </span>
               </Link>
             );
           })}
 
-          {/* Sliding Indicator */}
-          <AnimatePresence mode="wait">
-            {NAV.map((item, index) => {
-              if (!isActive(item.to)) return null;
-              return (
-                <motion.div
-                  key="indicator"
-                  className="absolute top-1.5 bottom-1.5 bg-[#C41230] rounded-2xl"
-                  initial={false}
-                  animate={{ left: `${index * 20}%`, width: "20%" }}
-                  transition={{ type: "spring", stiffness: 280, damping: 28 }}
-                />
-              );
-            })}
-          </AnimatePresence>
+          <motion.div
+            className="absolute bottom-1 h-[2px] rounded-full"
+            style={{
+              background: "#dc2626",
+              width: "calc(20% - 16px)",
+              marginLeft: "8px",
+            }}
+            animate={{ left: `calc(${activeIndex * 20}%)` }}
+            transition={{ type: "spring", stiffness: 350, damping: 35 }}
+          />
         </div>
       </nav>
     </div>
