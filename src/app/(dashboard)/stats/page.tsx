@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Flame, TrendingUp, BarChart3, Trophy, ChevronDown, ChevronUp } from "lucide-react";
+import { Flame, TrendingUp, BarChart3, Trophy, ChevronDown, ChevronUp, Heater } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
@@ -9,6 +9,7 @@ import {
 import { CATEGORY_LABEL, type ExerciseCategory } from "@/types";
 import { useState } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { ActivityHeatmap } from "@/components/HeatmapActivity";
 
 const PIE_COLORS = ["#C41230", "#f97316", "#3b82f6", "#22c55e"];
 
@@ -216,6 +217,7 @@ export default function StatsPage() {
           )}
         </div>
       </motion.div>
+      <ActivityHeatmap />
     </motion.div>
   );
 }
