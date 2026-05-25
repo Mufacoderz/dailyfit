@@ -70,13 +70,17 @@ export default function StatsPage() {
         />
       </motion.div>
 
-      {/* Charts side by side on desktop */}
-      <motion.div className="grid md:grid-cols-2 gap-4" variants={cardVariants}>
-        <WeeklyChart data={stats?.weeklyData ?? []} />
-        <MonthlyChart
-          data={stats?.monthlyData ?? []}
-          monthName={stats?.monthName ?? ""}
-        />
+      <motion.div className="grid md:grid-cols-2 gap-4 min-w-0" variants={cardVariants}>
+        <div className="min-w-0">
+          <WeeklyChart data={stats?.weeklyData ?? []} />
+        </div>
+
+        <div className="min-w-0">
+          <MonthlyChart
+            data={stats?.monthlyData ?? []}
+            monthName={stats?.monthName ?? ""}
+          />
+        </div>
       </motion.div>
 
       <motion.div className="grid md:grid-cols-2 gap-4" variants={cardVariants}>
